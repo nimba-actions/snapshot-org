@@ -1,0 +1,41 @@
+name: "Snapshot Org"
+description: "Create a snapshot of the current org"
+inputs:
+  github-token:
+    description: "Required only if running in a private organization."
+    required: false
+    default: ""
+  cumulusci-version:
+    description: "version of CumulusCI to install"
+    required: false
+  sfdx-version:
+    description: "version of SFDX to install"
+    required: false
+  dev-hub-auth-url:
+    description: "SFDX auth URL for the Dev Hub"
+    required: true
+  org-name:
+    description: "Name of the scratch org config to use"
+    required: true
+    default: feature
+  debug:
+    description: "Display debug logs during Flow Execution"
+    required: false
+    default: false
+    type: boolean
+runs:
+  using: "composite"
+  steps:
+    - name: Install Task Package
+      shell: bash
+      run: pip install -e ${{ github.action_path }}
+
+    - uses: nimba-actions/run-task@main
+      with:
+        github-token: "${{ inputs.github-token }}"
+        dev-hub-auth-url: "${{ inputs.dev-hub-auth-url }}"
+        org-name: "${{ inputs.org-name }}"
+        cumulusci-version: "${{ inputs.cumulusci-version }}"
+        sfdx-version: "${{ inputs.sfdx-version }}"
+        debug: "${{ inputs.debug }}"
+        task-name: snapshot_org
